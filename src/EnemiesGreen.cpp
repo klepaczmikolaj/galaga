@@ -15,6 +15,7 @@ EnemiesGreen::EnemiesGreen(int left, int right, int up, int down) : EnemiesRed(l
     mommentOfAttack = 0;
     directionRightInit = true;
     curveType = BezierCurve::curveType::curve1;
+    enemySaveFilename = "txt/saveGameFileGreen.txt";
 }
 
 std::string EnemiesGreen::getName(){
