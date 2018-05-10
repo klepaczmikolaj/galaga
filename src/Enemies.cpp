@@ -15,6 +15,7 @@ Enemies::Enemies(int left, int right, int up, int down): leftBorder(left), right
     mommentOfAttack = 0;
     directionRightInit = true;
     mapFilename = "json/map0.json";
+    enemySaveFilename = "txt/saveGameFileYellow.txt";
 }
 
 Enemies::Enemy::Enemy(){
@@ -114,15 +115,15 @@ void Enemies::initializeGameJson(){
     file.close();
 }
 
-void Enemies::initializeGroupFile(std::string filename){
+void Enemies::initializeGroupFile(){
     enemyVector.clear();
     mommentOfAttack = 0;
     isAttackStarted = false;
     horisontalEnemyMovementDistance = 1;
 
-    saveGameFile.open(filename, std::ios::in);
+    saveGameFile.open(enemySaveFilename, std::ios::in);
     if(!saveGameFile.is_open()){
-        std::cout << "Unable to read " << filename << " file" << std::endl << "Press any key to exit" << std::endl;
+        std::cout << "Unable to read " << enemySaveFilename << " file" << std::endl << "Press any key to exit" << std::endl;
         std::cin.ignore();
     }
     else{
