@@ -33,13 +33,14 @@ class Enemies{
         std::vector <Enemy> enemyVector;
         std::vector <int> attackingEnemyIndexVector;
         std::string mapFilename;
+        std::string enemySaveFilename;
         sf::Clock attackClock;
         bool isAttackStarted;
 
         virtual std::string getName();
         virtual void handleEnemies();
         void initializeGameJson();
-        void initializeGroupFile(std::string);
+        void initializeGroupFile();
         bool isSpecifiedEnemyAlreadyAttacking(int);
 
     protected:
