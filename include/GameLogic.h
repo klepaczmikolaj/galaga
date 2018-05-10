@@ -71,8 +71,9 @@ class GameLogic{
         sf::Vector2f deadEnemyPosition;
 
         std::vector <int> attackingEnemyIndexVector;
+        std::vector <Enemies*> enemyVector;
 
-        void saveGame(Enemies*, std::string);
+        void saveGame(Enemies*);
         void pauseGame();
         void eventLoop();
         void uploadTextures();
