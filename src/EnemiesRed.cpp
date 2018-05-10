@@ -15,6 +15,7 @@ EnemiesRed::EnemiesRed(int left, int right, int up, int down) : Enemies(left, ri
     mommentOfAttack = 0;
     directionRightInit = false;
     curveType = BezierCurve::curveType::curve2;
+    enemySaveFilename = "txt/saveGameFileRed.txt";
 }
 
 void EnemiesRed::handleEnemies(){
