@@ -13,8 +13,11 @@ GameLogic::GameLogic(){
     fighterSpeed = baseFighterSpeed;
     lives = 3;
     enemies = new Enemies(leftBorder, rightBorder, upBorder, downBorder);
+    enemyVector.push_back(enemies);
     enemiesGreen = new EnemiesGreen(leftBorder, rightBorder, upBorder, downBorder);
+    enemyVector.push_back(enemiesGreen);
     enemiesRed = new EnemiesRed(leftBorder, rightBorder, upBorder, downBorder);
+    enemyVector.push_back(enemiesRed);
     windowClose = false;
     isPlayerImmortal = false;
     isGameStarted = false;
@@ -27,6 +30,7 @@ GameLogic::GameLogic(){
     redFilename = "txt/saveGameFileRed.txt";
     scoreLivesMapFilename = "txt/save.txt";
     loadScore("txt/highscore.txt", highScore);
+    setMap(1);
 }
 
 GameLogic::~GameLogic(){
@@ -41,16 +45,14 @@ void GameLogic::updateGame(){
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){
             isGameStarted = true;
             if(isGameLoaded){
-                enemies->initializeGroupFile(yellowFilename);
-                enemiesGreen->initializeGroupFile(greenFilename);
-                enemiesRed->initializeGroupFile(redFilename);
+                for(auto iter : enemyVector)
+                    iter->initializeGroupFile();
                 loadScore(scoreLivesMapFilename, score, lives);
                 isGameLoaded = false;
             }
             else{
-                enemies->initializeGameJson();
-                enemiesRed->initializeGameJson();
-                enemiesGreen->initializeGameJson();
+                for(auto iter : enemyVector)
+                    iter->initializeGameJson();
             }
         }
 
@@ -69,9 +71,8 @@ void GameLogic::updateGame(){
         if(isTheBulletShot())
             updateBullets();
 
-        enemies->handleEnemies();
-        enemiesGreen->handleEnemies();
-        enemiesRed->handleEnemies();
+        for(auto iter : enemyVector)
+            iter->handleEnemies();
 
         if(isEnemyOnBoard()){
             deadEnemyPosition = removeDeadEnemyWithBullet();
@@ -85,9 +86,8 @@ void GameLogic::updateGame(){
 
         if(isPlayerHit() && !isPlayerImmortal){
             appendLoggerFighter();
-            enemies->initializeGameJson();
-            enemiesRed->initializeGameJson();
-            enemiesGreen->initializeGameJson();
+            for(auto iter : enemyVector)
+                iter->initializeGameJson();
             setFighterInitialPosition();
             updateLives();
             resetBonus();
@@ -101,16 +101,14 @@ void GameLogic::updateGame(){
             isGamePaused = false;
         }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Y)){
-            enemies->attackClock.restart();
-            enemiesGreen->attackClock.restart();
-            enemiesRed->attackClock.restart();
+            for(auto iter : enemyVector)
+                iter->attackClock.restart();
             isGamePaused = false;
             isGameSaved = false;
         }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-            saveGame(enemies, yellowFilename);
-            saveGame(enemiesGreen, greenFilename);
-            saveGame(enemiesRed, redFilename);
+            for(auto iter : enemyVector)
+                saveGame(iter);
             saveScoreLivesMap();
             isGameSaved = true;
         }
@@ -122,11 +120,11 @@ void GameLogic::updateGame(){
             windowClose = true;
 }
 
-void GameLogic::saveGame(Enemies *enemies, std::string filename){
-    saveGameFile.open(filename,std::ios::out);
-    if(enemies->enemyVector.empty())
+void GameLogic::saveGame(Enemies *enem){
+    saveGameFile.open(enem->enemySaveFilename,std::ios::out);
+    if(enem->enemyVector.empty())
         saveGameFile << std::endl;
-    for(auto enemy : enemies->enemyVector)
+    for(auto enemy : enem->enemyVector)
         saveGameFile << (int)enemy.initialPosition.x << " " << (int)enemy.initialPosition.y << " ";
 
     saveGameFile.close();
@@ -144,7 +142,13 @@ bool GameLogic::isTheBulletShot(){
 }
 
 bool GameLogic::isEnemyOnBoard(){
-    return !enemies->enemyVector.empty() || !enemiesGreen->enemyVector.empty() || !enemiesRed->enemyVector.empty();
+    for(auto iter : enemyVector){
+        if(!iter->enemyVector.empty())
+            return true;
+        else
+            continue;
+    }
+    return false;
 }
 
 void GameLogic::handleKeyboardInput(){
@@ -230,15 +234,12 @@ void GameLogic::removeBullets(){
 sf::Vector2f GameLogic::removeDeadEnemyWithBullet(){
     sf::Vector2f outputPosition;
 
-    outputPosition = removeDeadEnemyWithBullet(enemies);
-    if(outputPosition.x >= 0 && outputPosition.y >= 0)
-        return outputPosition;
+    for(auto iter : enemyVector){
+        outputPosition = removeDeadEnemyWithBullet(iter);
+        if(outputPosition.x >= 0 && outputPosition.y >= 0)
+            return outputPosition;
+    }
 
-    outputPosition = removeDeadEnemyWithBullet(enemiesGreen);
-    if(outputPosition.x >= 0 && outputPosition.y >= 0)
-        return outputPosition;
-
-    outputPosition = removeDeadEnemyWithBullet(enemiesRed);
     return outputPosition;
 }
 
@@ -289,18 +290,11 @@ void GameLogic::appendLoggerFighter(){
 }
 
 bool GameLogic::isPlayerHit(){
-    for(auto itEnemy = enemies->enemyVector.begin(); itEnemy != enemies->enemyVector.end(); itEnemy++){
-        if(areTexturesCovered(fighter,*itEnemy))
-            return true;
-    }
-    for(auto itEnemy = enemiesGreen->enemyVector.begin(); itEnemy != enemiesGreen->enemyVector.end(); itEnemy++){
-        if(areTexturesCovered(fighter,*itEnemy))
-            return true;
-    }
-    for(auto itEnemy = enemiesRed->enemyVector.begin(); itEnemy != enemiesRed->enemyVector.end(); itEnemy++){
-        if(areTexturesCovered(fighter,*itEnemy))
-            return true;
-    }
+    for(auto iter : enemyVector)
+        for(auto itEnemy = iter->enemyVector.begin(); itEnemy != iter->enemyVector.end(); itEnemy++)
+            if(areTexturesCovered(fighter,*itEnemy))
+                return true;
+
     return false;
 }
 
@@ -319,9 +313,9 @@ void GameLogic::loadScore(std::string filename, int &score, int &lives){
     else
         highScoreFile >> score >> lives >> mapFilename;
 
-    enemies->mapFilename = mapFilename;
-    enemiesGreen->mapFilename = mapFilename;
-    enemiesRed->mapFilename = mapFilename;
+    for(auto iter : enemyVector)
+        iter->mapFilename = mapFilename;
+
     highScoreFile.close();
 }
 
@@ -395,7 +389,6 @@ void GameLogic::setMap(int number){
     std::string filename = "json/map";
     filename += to_string(number);
     filename += ".json";
-    enemies->mapFilename = filename;
-    enemiesGreen->mapFilename = filename;
-    enemiesRed->mapFilename = filename;
+    for(auto iter : enemyVector)
+        iter->mapFilename = filename;
 }
