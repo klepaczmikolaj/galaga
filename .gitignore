@@ -3,6 +3,7 @@
 *.depend
 *.layout
 *.xmi
+*.exe
 
 # Obj Folder
 obj
