@@ -1,11 +1,2 @@
 Logger for Galaga Game
 
-[Tue May 08 09:20:07 2018][INFO]Enemy was killed on coordinates: X = 276  Y = 190
-[Tue May 08 09:20:07 2018][INFO]Bullet was removed on coordinates: X = 267.5  Y = 195
-[Tue May 08 09:20:08 2018][INFO]Enemy was killed on coordinates: X = 308  Y = 150
-[Tue May 08 09:20:08 2018][INFO]Bullet was removed on coordinates: X = 312.5  Y = 155
-
-
-Warnings: 0
-Errors: 0
-Number of info: 4

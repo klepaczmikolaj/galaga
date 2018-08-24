@@ -1,4 +1,4 @@
-#include "Bonus.h"
+#include "../include/Bonus.h"
 
 Bonus::Bonus(){
     toApply = false;

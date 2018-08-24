@@ -1,4 +1,4 @@
-#include "GameLogic.h"
+#include "../include/GameLogic.h"
 
 GameLogic::GameLogic(){
     logger = new Logger(Logger::outputType::file);

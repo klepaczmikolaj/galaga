@@ -1,4 +1,4 @@
-#include "BezierCurve.h"
+#include "../include/BezierCurve.h"
 BezierCurve::BezierCurve(){
 
 }

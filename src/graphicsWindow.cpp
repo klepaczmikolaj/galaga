@@ -1,4 +1,4 @@
-#include "graphicsWindow.h"
+#include "../include/graphicsWindow.h"
 
 GraphicsWindow::GraphicsWindow(){
     yellowEnemyScale = 0.125f;

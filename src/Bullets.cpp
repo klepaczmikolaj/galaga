@@ -1,5 +1,4 @@
-
-#include "Bullets.h"
+#include "../include/Bullets.h"
 
 Bullets::Bullets()
 {

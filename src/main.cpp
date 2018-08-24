@@ -1,5 +1,5 @@
 
-#include "graphicsWindow.h"
+#include "../include/graphicsWindow.h"
 
 int main()
 {
